@@ -111,4 +111,5 @@ function printResults(localResults, remoteMasterResults) {
 
 // Exporting the printResults function to be used in other modules
 // hello world
+// test2
 module.exports = printResults;
