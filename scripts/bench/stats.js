@@ -1,8 +1,12 @@
 'use strict';
 
+// Importing necessary modules: chalk for colored text in the terminal and cli-table for creating formatted tables
 const chalk = require('chalk');
 const Table = require('cli-table');
 
+/**
+ * Calculates the percentage change between two values and formats the result.
+ */
 function percentChange(prev, current, prevSem, currentSem) {
   const [mean, sd] = calculateMeanAndSdOfRatioFromDeltaMethod(
     prev,
@@ -20,11 +24,14 @@ function percentChange(prev, current, prevSem, currentSem) {
   } else if (pctChange - ci95 > 0) {
     return chalk.red(text);
   } else {
-    // Statistically insignificant.
+    // Statistically insignificant change
     return text;
   }
 }
 
+/**
+ * Calculates the mean and standard deviation of the ratio from the delta method.
+ */
 function calculateMeanAndSdOfRatioFromDeltaMethod(
   meanControl,
   meanTest,
@@ -40,6 +47,9 @@ function calculateMeanAndSdOfRatioFromDeltaMethod(
   return [mean, Math.sqrt(variance)];
 }
 
+/**
+ * Adds benchmark results to a table.
+ */
 function addBenchmarkResults(table, localResults, remoteMasterResults) {
   const benchmarks = Object.keys(
     (localResults && localResults.benchmarks) ||
@@ -69,7 +79,7 @@ function addBenchmarkResults(table, localResults, remoteMasterResults) {
       if (remoteMasterResults) {
         remoteMean = remoteMasterResults.benchmarks[benchmark].averages[i].mean;
         remoteSem = remoteMasterResults.benchmarks[benchmark].averages[i].sem;
-        // https://en.wikipedia.org/wiki/1.96 gives a 99% confidence interval.
+        // Calculating 95% confidence interval
         const ci95 = remoteSem * 1.96;
         row.push(
           chalk.white(+remoteMean.toFixed(2) + ' ms +- ' + ci95.toFixed(2))
@@ -93,6 +103,9 @@ function addBenchmarkResults(table, localResults, remoteMasterResults) {
   });
 }
 
+/**
+ * Prints the benchmark results by creating and displaying a formatted table.
+ */
 function printResults(localResults, remoteMasterResults) {
   const head = [''];
   if (remoteMasterResults) {
@@ -109,4 +122,5 @@ function printResults(localResults, remoteMasterResults) {
   console.log(table.toString());
 }
 
+// Exporting the printResults function to be used in other modules
 module.exports = printResults;
